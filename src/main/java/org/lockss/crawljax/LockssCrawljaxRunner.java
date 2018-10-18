@@ -42,11 +42,10 @@ import com.crawljax.core.configuration.CrawljaxConfiguration;
 import com.crawljax.core.configuration.CrawljaxConfiguration.CrawljaxConfigurationBuilder;
 import com.google.common.base.Preconditions;
 import com.google.common.io.Files;
-import org.apache.commons.cli.ParseException;
-import  org.slf4j.LoggerFactory;
-
 import java.io.File;
 import java.io.IOException;
+import org.apache.commons.cli.ParseException;
+import org.slf4j.LoggerFactory;
 
 public class LockssCrawljaxRunner {
 
@@ -67,12 +66,12 @@ public class LockssCrawljaxRunner {
   /**
    * The CrawljaxConfiguration object for this crawl.
    */
-  private  CrawljaxConfiguration m_config;
+  private CrawljaxConfiguration m_config;
 
   /**
    * The CrawljaxConfigurationBuilder for this crawl.
    */
-  private  CrawljaxConfigurationBuilder m_builder;
+  private CrawljaxConfigurationBuilder m_builder;
 
   /**
    * The main execution class for a LOCKSS crawljax crawl
@@ -82,16 +81,18 @@ public class LockssCrawljaxRunner {
   LockssCrawljaxRunner(String args[]) {
     try {
       this.m_options = new ParameterInterpreter(args);
-    } catch (ParseException e) {
+    }
+    catch (ParseException e) {
       throw new IllegalArgumentException(e.getMessage(), e);
     }
     if (m_options.necessaryArgsProvided()) {
       setupLogging();
       LockssConfigurationBuilder config_builder = setupBuilder();
       m_builder = config_builder.configure(m_options.getUrl(),
-                                           m_options.getOutputDir(),
-                                           m_options.getConfigFile());
-    } else {
+          m_options.getOutputDir(),
+          m_options.getConfigFile());
+    }
+    else {
       if (!m_options.requestsHelp()) {
         System.out.println(MISSING_ARGUMENT_MESSAGE);
       }
@@ -123,10 +124,12 @@ public class LockssCrawljaxRunner {
       CrawljaxConfiguration config = lockss_runner.getBuilder().build();
       CrawljaxRunner runner = new CrawljaxRunner(config);
       runner.call();
-    } catch (NumberFormatException e) {
+    }
+    catch (NumberFormatException e) {
       System.err.println("Could not parse number " + e.getMessage());
       System.exit(1);
-    } catch (RuntimeException e) {
+    }
+    catch (RuntimeException e) {
       System.err.println(e.getMessage());
       System.exit(1);
     }
@@ -134,13 +137,12 @@ public class LockssCrawljaxRunner {
 
 
   /**
-   * setup a LockssConfigurationBuilder which will be used to turn our
-   * properties file into a CrawljaxConfiguration.
+   * setup a LockssConfigurationBuilder which will be used to turn our properties file into a
+   * CrawljaxConfiguration.
    *
    * @return a LockssConfigurationBuilder
-   *
-   * @throws java.lang.IllegalStateException if a class was requested but was
-   * unable to instantiated.
+   * @throws java.lang.IllegalStateException if a class was requested but was unable to
+   * instantiated.
    */
   LockssConfigurationBuilder setupBuilder() {
     if (m_options.requestsBuilder()) {
@@ -148,14 +150,18 @@ public class LockssCrawljaxRunner {
       try {
         Class clazz = Class.forName(builder_class_name);
         return LockssConfigurationBuilder.class.cast(clazz.newInstance());
-      } catch (final InstantiationException e) {
-        throw new IllegalStateException(e);
-      } catch (final IllegalAccessException e) {
-        throw new IllegalStateException(e);
-      } catch (final ClassNotFoundException e) {
+      }
+      catch (final InstantiationException e) {
         throw new IllegalStateException(e);
       }
-    } else {
+      catch (final IllegalAccessException e) {
+        throw new IllegalStateException(e);
+      }
+      catch (final ClassNotFoundException e) {
+        throw new IllegalStateException(e);
+      }
+    }
+    else {
       return new DefLockssConfigurationBuilder();
     }
   }
@@ -176,7 +182,8 @@ public class LockssCrawljaxRunner {
           Files.createParentDirs(f);
           Files.touch(f);
         }
-      } catch (IOException e) {
+      }
+      catch (IOException e) {
         System.out.println("Could not create log file: " + e.getMessage());
       }
       Preconditions.checkArgument(f.canWrite());
@@ -191,7 +198,7 @@ public class LockssCrawljaxRunner {
    */
   void logToFile(String filename) {
     Logger rootLogger =
-        (Logger)  LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
+        (Logger) LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
 
     FileAppender<ILoggingEvent> fileappender =
         new FileAppender<ILoggingEvent>();

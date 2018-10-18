@@ -38,18 +38,16 @@ import com.crawljax.core.configuration.CrawljaxConfiguration.CrawljaxConfigurati
 import com.crawljax.core.configuration.InputSpecification;
 import com.crawljax.core.configuration.ProxyConfiguration;
 import com.crawljax.core.plugin.Plugin;
-import com.crawljax.plugins.proxy.WebScarabProxyPlugin;
-
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.PropertiesConfiguration;
-
 import java.io.File;
 import java.util.concurrent.TimeUnit;
+import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.PropertiesConfiguration;
 
 
 public class DefLockssConfigurationBuilder
 
-                                implements LockssConfigurationBuilder {
+    implements LockssConfigurationBuilder {
+
   /**
    * The maximum number of DOM states.  (Crawljax defaults to 0 = unlimited)
    */
@@ -63,24 +61,21 @@ public class DefLockssConfigurationBuilder
   static final int DEPTH_DEFAULT = 2;
 
   /**
-   * The browser to use for our crawl. (We default to PHANTOMJS which is
-   * faceless)
+   * The browser to use for our crawl. (We default to PHANTOMJS which is faceless)
    */
   static final String BROWSER_PARAM = "browser";
   static final BrowserType BROWSER_DEFAULT = BrowserType.PHANTOMJS;
 
   /**
-   * The number of browsers to run in parallel.  We only need one for a 1 level
-   * crawl.
+   * The number of browsers to run in parallel.  We only need one for a 1 level crawl.
    */
   static final String PARALLEL_PARAM = "parallel";
   static final int PARALLEL_DEFAULT = 1;
 
   /**
-   * Should we crawl hidden elements.  This has the up side of catching hidden
-   * elements that are hit by javascript but it may also hit tags that are
-   * simply
-   * left in the doc and never used. We default to true.
+   * Should we crawl hidden elements.  This has the up side of catching hidden elements that are hit
+   * by javascript but it may also hit tags that are simply left in the doc and never used. We
+   * default to true.
    */
   static final String CRAWL_HIDDEN_PARAM = "crawlHidden";
   static final boolean CRAWL_HIDDEN_DEFAULT = true;
@@ -92,27 +87,21 @@ public class DefLockssConfigurationBuilder
   static final boolean CLICK_ONCE_DEFAULT = true;
 
   /**
-   * How long we should wait for a single crawl to run in minutes.  We default
-   * to 5.
+   * How long we should wait for a single crawl to run in minutes.  We default to 5.
    */
   static final String TIMEOUT_PARAM = "timeout";
   static final int TIMEOUT_DEFAULT = 50;
 
   /**
-   * The time to wait after a page is loaded before we begin doing any
-   * clicking.
-   * This needs to be long enough for scripts etc to load (500 ms is the
-   * crawljax
-   * default)
+   * The time to wait after a page is loaded before we begin doing any clicking. This needs to be
+   * long enough for scripts etc to load (500 ms is the crawljax default)
    */
   static final String WAIT_AFTER_RELOAD_PARAM = "waitAfterReload";
   static final long WAIT_AFTER_RELOAD_DEFAULT = 500;
 
   /**
-   * The time to wait after an event has fired before we do any more clicks.
-   * This needs to be long enough for scripts etc to load (500 ms is the
-   * crawljax
-   * default)
+   * The time to wait after an event has fired before we do any more clicks. This needs to be long
+   * enough for scripts etc to load (500 ms is the crawljax default)
    */
   static final String WAIT_AFTER_EVENT_PARAM = "waitAfterEvent";
   static final long WAIT_AFTER_EVENT_DEFAULT = 500;
@@ -130,17 +119,15 @@ public class DefLockssConfigurationBuilder
   static final boolean INSERT_RANDOM_DATA_DEFAULT = false;
 
   /**
-   * A comma separated list of html tags to click. By default we click A, BUTTON
-   * and
-   * DIV which contain the attribute 'click'
+   * A comma separated list of html tags to click. By default we click A, BUTTON and DIV which
+   * contain the attribute 'click'
    */
   static final String CLICK_PARAM = "click";
   static final String CLICK_DEFAULT = "A, BUTTON";
 
   /**
-   * A comma separated list of html tags to not click.  If an item is in both
-   * the
-   * click and dontClick list the dont click will take precedence.
+   * A comma separated list of html tags to not click.  If an item is in both the click and
+   * dontClick list the dont click will take precedence.
    */
   static final String DONT_CLICK_PARAM = "dontClick";
 
@@ -150,26 +137,21 @@ public class DefLockssConfigurationBuilder
   static final String DONT_CLICK_CHILDREN_PARAM = "dontClickChildren";
 
   /**
-   * The comma separated list of plugin class names.  By default we use the
-   * LockssOutputPlugin which uses the scarab proxy to collect
-   * the outgoing request urls and store them in as a series of json files.  If
-   * the scarab proxy is not installed
+   * The comma separated list of plugin class names.  By default we use the LockssOutputPlugin which
+   * uses the warc proxy to collect the outgoing request urls and store them in as a series of json
+   * files.  If the warc proxy is not installed
    */
   static final String PLUGINS_PARAM = "plugins";
 
   /**
-   * This is the host and port that should be passed to any addtional proxy
-   * that is needed by LOCKSS to access the site
+   * This is the host and port that should be passed to any addtional proxy that is needed by LOCKSS
+   * to access the site
    */
   static final String LOCKSS_PROXY_HOST_PARAM = "lockssProxyHost";
   static final String LOCKSS_PROXY_PORT_PARAM = "lockssProxyPort";
 
   /**
-   * The scarab proxy: used to output json
-   */
-  static final String SCARAB_PROXY = "scarab";
-  /**
-   *  A warc output proxy such as MITM or
+   * A warc output proxy such as MITM or
    */
   static final String WARC_PROXY = "warc";
 
@@ -177,21 +159,8 @@ public class DefLockssConfigurationBuilder
    * What we should use to prosy through
    */
   static final String PROXY_PARAM = "proxy";
-  static final String PROXY_PARAM_DEFAULT = SCARAB_PROXY;
+  static final String PROXY_PARAM_DEFAULT = WARC_PROXY;
 
-  /* ----------------------------------------------------------------------- */
-  /*                        Scarab Proxy Support                             */
-  /* ----------------------------------------------------------------------- */
-  /**
-   * The address of the ScarabProxy. Default to localhost.
-   */
-  static final String SCARAB_PROXY_ADDR_PARAM = "scarabProxyHost";
-  static final String SCARAB_PROXY_ADDR_DEFAULT = "127.0.0.1";
-  /**
-   * The port for the ScarabProxy.  Default to 8084.
-   */
-  static final String SCARAB_PROXY_PORT_PARAM = "scarabProxyPort";
-  static final int SCARAB_PROXY_PORT_DEFAULT = 8084;
   /* ----------------------------------------------------------------------- */
   /*          WARC  Proxy Support  */
   /* ----------------------------------------------------------------------- */
@@ -226,32 +195,26 @@ public class DefLockssConfigurationBuilder
    * The PropertiesConfiguration created from our configuration file.
    */
   protected PropertiesConfiguration m_config;
-  /**
-   * The Crawljax ScarabProxy RequestBufferProxy Addon.  This is the actual
-   * collector of 'Request/Responses'.
-   */
-  LockssWebScarabProxyAddon m_webScarabProxyAddon;
 
 
   /**
-   * Configure a CrawljaxConfiguration for a given url from a configuration
-   * file with all output stored in a directory.
+   * Configure a CrawljaxConfiguration for a given url from a configuration file with all output
+   * stored in a directory.
    *
    * @param urlValue the url we use for the CrawljaxConfiguration
    * @param outDir the output directory to use for content
    * @param configFile the properties file to use for the CrawljaxConfiguration
-   *
    * @return the CrawljaxConfiguration
    */
   @Override
   public CrawljaxConfigurationBuilder configure(final String urlValue,
-                                         final String outDir,
-                                         final String configFile) {
+      final String outDir,
+      final String configFile) {
     m_urlValue = urlValue;
     m_outDir = outDir;
     m_configFile = configFile;
 
-  /* get a new builder for the stating url*/
+    /* get a new builder for the stating url*/
     CrawljaxConfigurationBuilder builder =
         CrawljaxConfiguration.builderFor(m_urlValue);
 
@@ -268,7 +231,8 @@ public class DefLockssConfigurationBuilder
         m_config = defaultConfig();
       }
       configureBuilder(builder);
-    } catch (ConfigurationException e) {
+    }
+    catch (ConfigurationException e) {
       System.out.println("Error configuring crawl: " + e.getMessage());
     }
     return builder;
@@ -284,10 +248,9 @@ public class DefLockssConfigurationBuilder
     return null;
   }
 
-  static PropertiesConfiguration defaultConfig()
-  {
+  static PropertiesConfiguration defaultConfig() {
     PropertiesConfiguration config = new PropertiesConfiguration();
-    config.setProperty(MAX_STATES_PARAM ,MAX_STATES_DEFAULT);
+    config.setProperty(MAX_STATES_PARAM, MAX_STATES_DEFAULT);
     config.setProperty(DEPTH_PARAM, DEPTH_DEFAULT);
     config.setProperty(BROWSER_PARAM, BROWSER_DEFAULT.name());
     config.setProperty(PARALLEL_PARAM, PARALLEL_DEFAULT);
@@ -300,8 +263,6 @@ public class DefLockssConfigurationBuilder
     config.setProperty(INSERT_RANDOM_DATA_PARAM, INSERT_RANDOM_DATA_DEFAULT);
     config.setProperty(CLICK_PARAM, CLICK_DEFAULT);
     config.setProperty(PROXY_PARAM, PROXY_PARAM_DEFAULT);
-    config.setProperty(SCARAB_PROXY_ADDR_PARAM, SCARAB_PROXY_ADDR_DEFAULT);
-    config.setProperty(SCARAB_PROXY_PORT_PARAM, SCARAB_PROXY_PORT_DEFAULT);
     config.setProperty(WARC_PROXY_HOST_PARAM, WARC_PROXY_HOST_DEFAULT);
     config.setProperty(WARC_PROXY_WEB_PORT_PARAM, WARC_PROXY_WEB_PORT_DEFAULT);
     return config;
@@ -344,9 +305,7 @@ public class DefLockssConfigurationBuilder
 
   /**
    * @param builder the CrawljaxConfigurationBuilder we add to
-   *
-   * @throws ConfigurationException if we could not create at least one output
-   * plugin.
+   * @throws ConfigurationException if we could not create at least one output plugin.
    */
   protected void configureBuilder(CrawljaxConfigurationBuilder builder)
       throws ConfigurationException {
@@ -365,14 +324,16 @@ public class DefLockssConfigurationBuilder
 
     // set up max states.  defaults to 0 i.e. no limit.
     int max_states = m_config.getInt(MAX_STATES_PARAM, MAX_STATES_DEFAULT);
-    if(max_states > 1)
+    if (max_states > 1) {
       builder.setMaximumStates(max_states);
-    else
+    }
+    else {
       builder.setUnlimitedStates();
+    }
     configureCrawlRules(builder);
     configureCrawlClicks(builder);
     InputSpecification spec = getInputSpecification();
-    if(spec != null) {
+    if (spec != null) {
       builder.crawlRules().setInputSpec(spec);
     }
 
@@ -380,9 +341,7 @@ public class DefLockssConfigurationBuilder
     // incoming and outgoing traffic.  We use this in the default plugin
     // to write out the request/response pairs or WARC file.
     String proxy = m_config.getString(PROXY_PARAM, PROXY_PARAM_DEFAULT);
-    if (SCARAB_PROXY.equalsIgnoreCase(proxy)) {
-      installScarabProxyPlugin(builder);
-    } else if (WARC_PROXY.equalsIgnoreCase(proxy)) {
+    if (WARC_PROXY.equalsIgnoreCase(proxy)) {
       installWARCProxyPlugin(builder);
     }
     // configure any crawljax plugins
@@ -394,40 +353,35 @@ public class DefLockssConfigurationBuilder
   }
 
   /**
-   * CrawlRule specific configurations.  By default this will set
-   * set crawlHiddenAnchors true or as defined in properties
-   * set clickOnce true or as defined in properties
-   * set crawlFrames true or as defined in properties
-   * set insertRandomDataInInputForms false or as defined in properties
-   * set setMaximumRunTime 5m or as defined in properties
-   * set waitAfterEvent 500ms or as defined in properties
-   * set waitAfterReload 500ms or as defined in properties
-   * then call configureCrawlClicks to install items to click or not click.
-   * Override configureCrawlClicks to change click crawlrules from simple
-   * tag lists.
+   * CrawlRule specific configurations.  By default this will set set crawlHiddenAnchors true or as
+   * defined in properties set clickOnce true or as defined in properties set crawlFrames true or as
+   * defined in properties set insertRandomDataInInputForms false or as defined in properties set
+   * setMaximumRunTime 5m or as defined in properties set waitAfterEvent 500ms or as defined in
+   * properties set waitAfterReload 500ms or as defined in properties then call configureCrawlClicks
+   * to install items to click or not click. Override configureCrawlClicks to change click
+   * crawlrules from simple tag lists.
    *
    * @param builder the CrawljaxConfigurationBuilder we will insert into
    */
   protected void configureCrawlRules(final CrawljaxConfigurationBuilder builder) {
     // setup crawl of hidden anchors.  default to true.
     boolean crawl_hidden = m_config.getBoolean(CRAWL_HIDDEN_PARAM,
-                                               CRAWL_HIDDEN_DEFAULT);
+        CRAWL_HIDDEN_DEFAULT);
     builder.crawlRules().crawlHiddenAnchors(crawl_hidden);
 
     // setup click each element once.  default to true.
     boolean click_once = m_config.getBoolean(CLICK_ONCE_PARAM,
-                                             CLICK_ONCE_DEFAULT);
+        CLICK_ONCE_DEFAULT);
     builder.crawlRules().clickOnce(click_once);
-
 
     // setup whether we crawl frames.  default to true.
     boolean crawl_frames = m_config.getBoolean(CRAWL_FRAMES_PARAM,
-                                               CRAWL_FRAMES_DEFAULT);
+        CRAWL_FRAMES_DEFAULT);
     builder.crawlRules().crawlFrames(crawl_frames);
 
     // setup whether we insert random data into forms. default to false.
     boolean random_data = m_config.getBoolean(INSERT_RANDOM_DATA_PARAM,
-                                              INSERT_RANDOM_DATA_DEFAULT);
+        INSERT_RANDOM_DATA_DEFAULT);
     builder.crawlRules().insertRandomDataInInputForms(random_data);
 
     // set up the basic crawl times these need reasonable defaults
@@ -436,22 +390,21 @@ public class DefLockssConfigurationBuilder
 
     // time to wait after event fires. default to 500ms
     long wait_after_event = m_config.getLong(WAIT_AFTER_EVENT_PARAM,
-                                             WAIT_AFTER_EVENT_DEFAULT);
+        WAIT_AFTER_EVENT_DEFAULT);
     builder.crawlRules()
         .waitAfterEvent(wait_after_event, TimeUnit.MILLISECONDS);
 
     // time to wait after url fetched before clicks start.  default to 500ms
     long wait_after_reload = m_config.getLong(WAIT_AFTER_RELOAD_PARAM,
-                                              WAIT_AFTER_RELOAD_DEFAULT);
+        WAIT_AFTER_RELOAD_DEFAULT);
     builder.crawlRules().waitAfterReloadUrl(wait_after_reload,
-                                            TimeUnit.MILLISECONDS);
+        TimeUnit.MILLISECONDS);
   }
 
   /**
-   * Configure the click, dontClick and dontClickChildren portions of
-   * crawlrules.  This should be overridden if the desired behaviour is not the
-   * default behaviour and requires more complicated behaviour than simple tag
-   * lists.
+   * Configure the click, dontClick and dontClickChildren portions of crawlrules.  This should be
+   * overridden if the desired behaviour is not the default behaviour and requires more complicated
+   * behaviour than simple tag lists.
    *
    * @param builder the CrawljaxConfigurationBuilder we add to
    */
@@ -485,8 +438,8 @@ public class DefLockssConfigurationBuilder
   }
 
   /**
-   * install any plugins defined in the config file.  If at least one isn't
-   * specified we install the default one.
+   * install any plugins defined in the config file.  If at least one isn't specified we install the
+   * default one.
    *
    * @param builder the CrawljaxConfigurationBuilder we add to
    */
@@ -498,81 +451,50 @@ public class DefLockssConfigurationBuilder
         Plugin plugin = instantiate(plugin_name, Plugin.class);
         builder.addPlugin(plugin);
         has_one_plugin = true;
-      } catch (IllegalStateException e) {
+      }
+      catch (IllegalStateException e) {
         System.out.println("Failed to install plugin '" + plugin_name +
-                               "' -" + e.getMessage());
+            "' -" + e.getMessage());
       }
     }
     return has_one_plugin;
   }
 
-  /**
-   * Install the WebScarab ProxyPlugin. This will cause the installed browser
-   * toproxy through WebScarab which does request caching.
-   *
-   * @param builder the CrawljaxConfigurationBuilder we add to
-   */
-  protected void installScarabProxyPlugin(CrawljaxConfigurationBuilder builder) {
-    WebScarabProxyPlugin proxyPlugin = new WebScarabProxyPlugin();
-
-    // we create a new request buffer - we pass in true to collect 'everything'
-    // when we're done with the crawl we flush the internal buffer.  The files
-    // remain in the output directory until they are.
-    m_webScarabProxyAddon = new LockssWebScarabProxyAddon(m_outDir);
-    proxyPlugin.addPlugin(m_webScarabProxyAddon);
-    String proxyAddr = m_config.getString(SCARAB_PROXY_ADDR_DEFAULT,
-                                          SCARAB_PROXY_ADDR_DEFAULT);
-    int proxyPort = m_config.getInt(SCARAB_PROXY_PORT_PARAM,
-                                    SCARAB_PROXY_PORT_DEFAULT);
-
-    // add the webscarb proxy plugin
-    builder.addPlugin(proxyPlugin);
-    // set  proxy address and port
-    builder.setProxyConfig(ProxyConfiguration.manualProxyOn(proxyAddr,
-                                                            proxyPort));
-    // set the proxy output plugin
-    builder.addPlugin(new WebScarabOutput(m_webScarabProxyAddon));
-  }
 
   protected void installWARCProxyPlugin(final CrawljaxConfigurationBuilder
-                                      builder) {
+      builder) {
     String proxyAddr = m_config.getString(WARC_PROXY_HOST_PARAM,
-                                          WARC_PROXY_HOST_DEFAULT);
+        WARC_PROXY_HOST_DEFAULT);
     int proxyPort = m_config.getInt(WARC_PROXY_WEB_PORT_PARAM,
-                                    WARC_PROXY_WEB_PORT_DEFAULT);
+        WARC_PROXY_WEB_PORT_DEFAULT);
     // set  proxy address and port
     builder.setProxyConfig(ProxyConfiguration.manualProxyOn(proxyAddr,
-                                                            proxyPort));
+        proxyPort));
   }
 
 
   /**
-   * build out the list of Crawljax supported browser types for display in help
-   * msg.
+   * build out the list of Crawljax supported browser types for display in help msg.
    *
    * @return a String of comma separated browser type names.
    */
   protected String availableBrowsers() {
     StringBuilder sb = new StringBuilder();
 
-    for(BrowserType type : BrowserType.values()) {
+    for (BrowserType type : BrowserType.values()) {
       sb.append(type.name());
       sb.append(',');
     }
-    sb.deleteCharAt(sb.length()-1);
+    sb.deleteCharAt(sb.length() - 1);
     return sb.toString();
   }
 
   /**
-   * Convert the String name of a browser to the BrowserType which matches that
-   * name.
+   * Convert the String name of a browser to the BrowserType which matches that name.
    *
    * @param browser_name the name of the browser
-   *
    * @return a BrowserType of that name
-   *
-   * @throws IllegalArgumentException if name is not found in out
-   * types.
+   * @throws IllegalArgumentException if name is not found in out types.
    */
   protected BrowserType getSpecifiedBrowser(String browser_name) {
     for (BrowserType b : BrowserType.values()) {
@@ -581,9 +503,9 @@ public class DefLockssConfigurationBuilder
       }
     }
     throw new IllegalArgumentException("Unrecognized browser: '" +
-                                           browser_name +
-                                           "'. Available browsers are: "
-                                           + availableBrowsers());
+        browser_name +
+        "'. Available browsers are: "
+        + availableBrowsers());
   }
 
   /**
@@ -591,16 +513,15 @@ public class DefLockssConfigurationBuilder
    *
    * @param className the name of the class to instantiate
    * @param type the type or Class to instantiate
-   *
    * @return an instance of the class cast as a object of type T
-   *
    * @throws java.lang.IllegalStateException if we unable to make the class
    */
   public <T> T instantiate(final String className, final Class<T> type)
       throws IllegalStateException {
     try {
       return type.cast(Class.forName(className).newInstance());
-    } catch (final InstantiationException | IllegalAccessException | ClassNotFoundException e) {
+    }
+    catch (final InstantiationException | IllegalAccessException | ClassNotFoundException e) {
       throw new IllegalStateException(e);
     }
   }

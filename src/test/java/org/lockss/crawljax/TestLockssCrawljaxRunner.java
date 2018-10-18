@@ -1,17 +1,17 @@
 package org.lockss.crawljax;
 
+import java.io.File;
 import junit.framework.TestCase;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.io.FileUtils;
 
-import java.io.File;
-
 public
 class TestLockssCrawljaxRunner extends TestCase {
+
   File m_crawljaxDir;
   File m_cacheDir;
   DefLockssConfigurationBuilder m_configBuilder;
-  String m_testUrl= "http://salt.ece.ubc.ca";
+  String m_testUrl = "http://salt.ece.ubc.ca";
   String m_configFileName;
   private String m_cacheDirName;
   private PropertiesConfiguration m_defaultConfig =

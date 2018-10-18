@@ -31,11 +31,14 @@ in this Software without prior written authorization from Stanford University.
 */
 package org.lockss.crawljax;
 
-import org.apache.commons.cli.*;
-import org.apache.commons.validator.routines.UrlValidator;
-
 import java.io.File;
 import java.io.PrintWriter;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.GnuParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+import org.apache.commons.validator.routines.UrlValidator;
 
 class ParameterInterpreter {
 
@@ -65,8 +68,8 @@ class ParameterInterpreter {
   private Options getOptions() {
     Options options = new Options();
     options.addOption("b", BUILDER, true,
-                      "LockssConfigurationBuilder class name");
-    options.addOption("c",CONFIG, true, "Configuration file name");
+        "LockssConfigurationBuilder class name");
+    options.addOption("c", CONFIG, true, "Configuration file name");
     options.addOption("l", LOG, true, "File to log output");
     options.addOption("h", HELP, false, "print this message");
     options.addOption("d", DEBUG, false, "output verbose messages");
@@ -75,8 +78,8 @@ class ParameterInterpreter {
 
 
   /**
-   * Do we have the expected number of command line arguments. There should be 3.
-   * The url must be an allowed url and the config file must exist.
+   * Do we have the expected number of command line arguments. There should be 3. The url must be an
+   * allowed url and the config file must exist.
    *
    * @return true if we do, false if we don't
    */
@@ -84,7 +87,8 @@ class ParameterInterpreter {
     if (m_parameters.getArgs().length == 2) {
       checkUrlValidity(getUrl());
       return true;
-    } else {
+    }
+    else {
       return false;
     }
   }
@@ -97,8 +101,8 @@ class ParameterInterpreter {
   private void checkUrlValidity(String urlValue) {
     String[] schemes = {"http", "https"};
     if (urlValue == null || !new UrlValidator(schemes).isValid(urlValue)) {
-      throw new IllegalArgumentException("Invalid URL: " + urlValue+"" +
-                              ". Provide a valid URL like http://example.com");
+      throw new IllegalArgumentException("Invalid URL: " + urlValue + "" +
+          ". Provide a valid URL like http://example.com");
     }
   }
 
@@ -122,28 +126,30 @@ class ParameterInterpreter {
   }
 
   /**
-   * get the file to use to configure our crawl.  This should be the second
-   * commandline argument
+   * get the file to use to configure our crawl.  This should be the second commandline argument
    *
    * @return the string value of the configuration file.
    */
   boolean hasConfigFile() {
-    if(m_parameters.hasOption(CONFIG)) {
+    if (m_parameters.hasOption(CONFIG)) {
       File f_config = new File(m_parameters.getOptionValue(CONFIG));
       return f_config.exists() && f_config.canRead();
     }
     return false;
- }
+  }
 
   /**
    * Get the optional assigned value for -c or -config
+   *
    * @return -c or -config value or null
    */
   String getConfigFile() {
-   if(hasConfigFile())
-     return m_parameters.getOptionValue(CONFIG);
-   return null;
- }
+    if (hasConfigFile()) {
+      return m_parameters.getOptionValue(CONFIG);
+    }
+    return null;
+  }
+
   /**
    * does the command line contain a request for help
    *
@@ -174,16 +180,15 @@ class ParameterInterpreter {
   }
 
   /**
-   * Print out the help message.  For use on the command line when running at the
-   * console.
+   * Print out the help message.  For use on the command line when running at the console.
    */
   void printHelp() {
     String cmlSyntax = HELP_MESSAGE;
     final PrintWriter writer = new PrintWriter(System.out);
     final HelpFormatter helpFormatter = new HelpFormatter();
     helpFormatter.printHelp(writer, ROW_WIDTH, cmlSyntax, "",
-                            m_options, SPACES_AFTER_OPTION,
-                            SPACES_BEFORE_OPTION, "");
+        m_options, SPACES_AFTER_OPTION,
+        SPACES_BEFORE_OPTION, "");
     writer.flush();
   }
 

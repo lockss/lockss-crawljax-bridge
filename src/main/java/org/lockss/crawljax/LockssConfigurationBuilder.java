@@ -35,27 +35,27 @@ import com.crawljax.core.configuration.CrawljaxConfiguration.CrawljaxConfigurati
 import com.crawljax.core.configuration.InputSpecification;
 
 /**
- * Interface which must be implemented for converting a list of properties into
- * a CrawljaxConfiguration.
+ * Interface which must be implemented for converting a list of properties into a
+ * CrawljaxConfiguration.
  */
 public interface LockssConfigurationBuilder {
+
   /**
-   * Configure a CrawljaxConfiguration for a given url from a configuration
-   * file with all output stored in a directory.
+   * Configure a CrawljaxConfiguration for a given url from a configuration file with all output
+   * stored in a directory.
    *
    * @param urlValue the url we use for the CrawljaxConfiguration
    * @param outDir the output directory to use for content
-   * @param configFile the properties file to use for the
-   * CrawljaxConfiguration
-   *
+   * @param configFile the properties file to use for the CrawljaxConfiguration
    * @return the CrawljaxConfiguration
    */
   CrawljaxConfigurationBuilder configure(String urlValue,
-                                  String outDir,
-                                  String configFile);
+      String outDir,
+      String configFile);
 
   /**
    * Build create an InputSpecification and configure it
+   *
    * @return a new created and configured InputSpecification
    */
   InputSpecification getInputSpecification();
