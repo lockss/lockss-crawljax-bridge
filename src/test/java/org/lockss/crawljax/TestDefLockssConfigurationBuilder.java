@@ -45,62 +45,50 @@ import junit.framework.TestCase;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.io.FileUtils;
+import org.junit.After;
+import org.junit.Before;
 
 /**
  * Test class for DefLockssConfigurationBuilder Created by claire on 3/18/14.
  */
 public class TestDefLockssConfigurationBuilder extends TestCase {
 
-  File m_crawljaxDir;
-  File m_cacheDir;
-  DefLockssConfigurationBuilder m_configBuilder;
+  File mCrawljaxDir;
+  File mCacheDir;
+  DefLockssConfigurationBuilder mConfigBuilder;
   String m_testUrl = "http://www.example.com";
-  String m_configFileName;
-  private String m_cacheDirName;
-  private PropertiesConfiguration m_defaultConfig =
+  String mConfigFileName;
+  String mCacheDirName;
+  private PropertiesConfiguration mDefaultConfig =
       DefLockssConfigurationBuilder.defaultConfig();
 
+  @Before
   public void setUp() throws Exception {
     super.setUp();
-    m_crawljaxDir = new File(FileUtils.getTempDirectory(), "crawljax");
-    m_cacheDir = new File(m_crawljaxDir, "cache");
-    m_cacheDir.mkdirs();
-    m_cacheDirName = m_cacheDir.getAbsolutePath();
-    m_configBuilder = new DefLockssConfigurationBuilder();
-    File config = new File(m_crawljaxDir, "lockss.config");
-    m_configFileName = config.getAbsolutePath();
-
+    mCrawljaxDir = new File(FileUtils.getTempDirectory(), "crawljax");
+    mCacheDir = new File(mCrawljaxDir, "cache");
+    mCacheDir.mkdirs();
+    mCacheDirName = mCacheDir.getAbsolutePath();
+    mConfigBuilder = new DefLockssConfigurationBuilder();
+    File config = new File(mCrawljaxDir, "lockss.config");
+    mConfigFileName = config.getAbsolutePath();
   }
 
+
+  @After
   public void tearDown() throws Exception {
-    FileUtils.deleteDirectory(m_crawljaxDir);
+    FileUtils.deleteDirectory(mCrawljaxDir);
     super.tearDown();
   }
 
   public void testConfigure() throws Exception {
-    CrawljaxConfigurationBuilder builder;
+    CrawljaxConfigurationBuilder ccbuilder;
     CrawljaxConfiguration crawljaxConfig;
-    int maxStates = 100;
-    int depth = 1;
-    long runtime = 10;
-    String browser = "chrome";
-    createMockConfig(m_configFileName, maxStates, depth, runtime, browser,
-        DefLockssConfigurationBuilder.PROXY_PARAM_DEFAULT);
 
-    // test configure with all data
-    builder = m_configBuilder.configure(m_testUrl, m_cacheDirName,
-        m_configFileName);
-    crawljaxConfig = builder.build();
-/*
-    assertEquals(maxStates, crawljaxConfig.getMaximumStates());
-    assertEquals(depth, crawljaxConfig.getMaximumDepth());
-    assertEquals(runtime * 60000, crawljaxConfig.getMaximumRuntime());
-    assertEquals(browser.toUpperCase(),
-        crawljaxConfig.getBrowserConfig().getBrowsertype().name());
-*/
+
     // test null configfile - valid input
-    builder = m_configBuilder.configure(m_testUrl, m_cacheDirName, null);
-    crawljaxConfig = builder.build();
+    ccbuilder = mConfigBuilder.configure(m_testUrl, mCacheDirName, null);
+    crawljaxConfig = ccbuilder.build();
 
     assertEquals(DefLockssConfigurationBuilder.MAX_STATES_DEFAULT,
         crawljaxConfig.getMaximumStates());
@@ -113,9 +101,9 @@ public class TestDefLockssConfigurationBuilder extends TestCase {
 
     // test null input.
     try {
-      builder = m_configBuilder.configure(null, m_cacheDirName,
-          m_configFileName);
-      crawljaxConfig = builder.build();
+      ccbuilder = mConfigBuilder.configure(null, mCacheDirName,
+          mConfigFileName);
+      crawljaxConfig = ccbuilder.build();
       fail("null url should throw null pointer exception");
     }
     catch (NullPointerException npe) {
@@ -124,21 +112,40 @@ public class TestDefLockssConfigurationBuilder extends TestCase {
 
     // test null cache dir
     try {
-      builder = m_configBuilder.configure(m_testUrl, null, m_configFileName);
-      crawljaxConfig = builder.build();
+      ccbuilder = mConfigBuilder.configure(m_testUrl, null, mConfigFileName);
+      crawljaxConfig = ccbuilder.build();
       fail("null output should throw null pointer exception");
     }
     catch (NullPointerException npe) {
 
     }
+    // test configure with all data
+    int maxStates = 100;
+    int depth = 1;
+    long runtime = 10;
+    String browser = "chrome";
+
+    createMockConfig(mConfigFileName, maxStates, depth, runtime, browser,
+        DefLockssConfigurationBuilder.PROXY_PARAM_DEFAULT);
+
+    assertTrue(new File(mConfigFileName).exists());
+    ccbuilder = mConfigBuilder.configure(m_testUrl, mCacheDirName, mConfigFileName);
+    crawljaxConfig = ccbuilder.build();
+
+    assertEquals(maxStates, crawljaxConfig.getMaximumStates());
+    assertEquals(depth, crawljaxConfig.getMaximumDepth());
+    assertEquals(runtime * 60000, crawljaxConfig.getMaximumRuntime());
+    assertEquals(browser.toUpperCase(),
+        crawljaxConfig.getBrowserConfig().getBrowsertype().name());
+
   }
 
   public void testConfigureCrawlRules() throws Exception {
-    CrawljaxConfigurationBuilder builder =
+    CrawljaxConfigurationBuilder ccbuilder =
         CrawljaxConfiguration.builderFor(m_testUrl);
-    m_configBuilder.setConfig(m_defaultConfig);
-    m_configBuilder.configureCrawlRules(builder);
-    CrawljaxConfiguration cconfig = builder.build();
+    mConfigBuilder.setConfig(mDefaultConfig);
+    mConfigBuilder.configureCrawlRules(ccbuilder);
+    CrawljaxConfiguration cconfig = ccbuilder.build();
     CrawlRules rules = cconfig.getCrawlRules();
     assertEquals(DefLockssConfigurationBuilder.CRAWL_HIDDEN_DEFAULT,
         rules.isCrawlHiddenAnchors());
@@ -171,9 +178,9 @@ public class TestDefLockssConfigurationBuilder extends TestCase {
         !DefLockssConfigurationBuilder.CRAWL_FRAMES_DEFAULT);
     config.setProperty(DefLockssConfigurationBuilder.INSERT_RANDOM_DATA_PARAM,
         !DefLockssConfigurationBuilder.INSERT_RANDOM_DATA_DEFAULT);
-    m_configBuilder.setConfig(config);
-    m_configBuilder.configureCrawlRules(builder);
-    cconfig = builder.build();
+    mConfigBuilder.setConfig(config);
+    mConfigBuilder.configureCrawlRules(ccbuilder);
+    cconfig = ccbuilder.build();
     rules = cconfig.getCrawlRules();
     assertEquals(!DefLockssConfigurationBuilder.CRAWL_HIDDEN_DEFAULT,
         rules.isCrawlHiddenAnchors());
@@ -194,8 +201,8 @@ public class TestDefLockssConfigurationBuilder extends TestCase {
   public void testConfigureCrawlClicks() throws Exception {
     CrawljaxConfigurationBuilder builder =
         CrawljaxConfiguration.builderFor(m_testUrl);
-    m_configBuilder.setConfig(m_defaultConfig);
-    m_configBuilder.configureCrawlClicks(builder);
+    mConfigBuilder.setConfig(mDefaultConfig);
+    mConfigBuilder.configureCrawlClicks(builder);
     CrawljaxConfiguration cconfig = builder.build();
     CrawlRules rules = cconfig.getCrawlRules();
     ImmutableList<CrawlElement> included =
@@ -215,8 +222,8 @@ public class TestDefLockssConfigurationBuilder extends TestCase {
     config.setProperty(DefLockssConfigurationBuilder
             .DONT_CLICK_CHILDREN_PARAM,
         "FORM");
-    m_configBuilder.setConfig(config);
-    m_configBuilder.configureCrawlClicks(builder);
+    mConfigBuilder.setConfig(config);
+    mConfigBuilder.configureCrawlClicks(builder);
     cconfig = builder.build();
     rules = cconfig.getCrawlRules();
     included = rules.getPreCrawlConfig().getIncludedElements();
@@ -229,9 +236,9 @@ public class TestDefLockssConfigurationBuilder extends TestCase {
   public void testConfigurePlugins() throws Exception {
     CrawljaxConfigurationBuilder builder =
         CrawljaxConfiguration.builderFor(m_testUrl);
-    m_configBuilder.setConfig(m_defaultConfig);
+    mConfigBuilder.setConfig(mDefaultConfig);
     // default config does not have any plugins
-    assertFalse(m_configBuilder.configurePlugins(builder));
+    assertFalse(mConfigBuilder.configurePlugins(builder));
 
     // add a plugin
   }
@@ -240,9 +247,9 @@ public class TestDefLockssConfigurationBuilder extends TestCase {
   public void testInstallLapProxyPlugin() throws Exception {
     CrawljaxConfigurationBuilder builder =
         CrawljaxConfiguration.builderFor(m_testUrl);
-    m_configBuilder.setOutDir(m_cacheDirName);
-    m_configBuilder.setConfig(m_defaultConfig);
-    m_configBuilder.installWARCProxyPlugin(builder);
+    mConfigBuilder.setOutDir(mCacheDirName);
+    mConfigBuilder.setConfig(mDefaultConfig);
+    mConfigBuilder.installWARCProxyPlugin(builder);
     CrawljaxConfiguration cconfig = builder.build();
     // test the scarab proxy has been installed
     ProxyConfiguration proxyConfig =
@@ -259,13 +266,12 @@ public class TestDefLockssConfigurationBuilder extends TestCase {
 
   public void testAvailableBrowsers() throws Exception {
     String expected = "FIREFOX,INTERNET_EXPLORER,CHROME,REMOTE,PHANTOMJS";
-    String actual = m_configBuilder.availableBrowsers();
+    String actual = mConfigBuilder.availableBrowsers();
     assertEquals(expected, actual);
   }
 
   private void createMockConfig(String fileName, int maxStates, int depth,
-      long runtime, String browser, String proxy)
-      throws ConfigurationException {
+      long runtime, String browser, String proxy)  throws ConfigurationException{
     PropertiesConfiguration config = new PropertiesConfiguration();
     config.setProperty(DefLockssConfigurationBuilder.MAX_STATES_PARAM, maxStates);
     config.setProperty(DefLockssConfigurationBuilder.DEPTH_PARAM, depth);
@@ -273,5 +279,6 @@ public class TestDefLockssConfigurationBuilder extends TestCase {
     config.setProperty(DefLockssConfigurationBuilder.BROWSER_PARAM, browser);
     config.setProperty(DefLockssConfigurationBuilder.PROXY_PARAM, proxy);
     config.save(fileName);
-  }
+ }
+
 }

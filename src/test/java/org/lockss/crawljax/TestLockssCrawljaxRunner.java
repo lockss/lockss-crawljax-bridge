@@ -40,7 +40,7 @@ class TestLockssCrawljaxRunner extends TestCase {
     String[] args = new String[3];
     args[0] = m_testUrl;
     args[1] = m_cacheDirName;
-    args[2] = m_configFileName;
+    args[2] = mConfigFileName;
 
     LockssCrawljaxRunner runner = new LockssCrawljaxRunner(args);
     runner.runIfConfigured();

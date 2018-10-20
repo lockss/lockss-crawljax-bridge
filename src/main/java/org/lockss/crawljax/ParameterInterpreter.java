@@ -34,7 +34,7 @@ package org.lockss.crawljax;
 import java.io.File;
 import java.io.PrintWriter;
 import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.GnuParser;
+import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
@@ -52,12 +52,12 @@ class ParameterInterpreter {
   private static final int SPACES_AFTER_OPTION = 3;
   private static final int SPACES_BEFORE_OPTION = 5;
   private static final int ROW_WIDTH = 80;
-  private final Options m_options;
-  private final CommandLine m_parameters;
+  private final Options mOptions;
+  private final CommandLine mParameters;
 
-  ParameterInterpreter(String args[]) throws ParseException {
-    m_options = getOptions();
-    this.m_parameters = new GnuParser().parse(m_options, args);
+  ParameterInterpreter(String... args) throws ParseException {
+    mOptions = getOptions();
+    this.mParameters = new DefaultParser().parse(mOptions, args);
   }
 
   /**
@@ -84,7 +84,7 @@ class ParameterInterpreter {
    * @return true if we do, false if we don't
    */
   boolean necessaryArgsProvided() {
-    if (m_parameters.getArgs().length == 2) {
+    if (mParameters.getArgs().length == 2) {
       checkUrlValidity(getUrl());
       return true;
     }
@@ -113,7 +113,7 @@ class ParameterInterpreter {
    * @return the string value of the first command line arguement
    */
   String getUrl() {
-    return m_parameters.getArgs()[0];
+    return mParameters.getArgs()[0];
   }
 
   /**
@@ -122,7 +122,7 @@ class ParameterInterpreter {
    * @return the string value of the directory to use for output files.
    */
   String getOutputDir() {
-    return m_parameters.getArgs()[1];
+    return mParameters.getArgs()[1];
   }
 
   /**
@@ -131,8 +131,8 @@ class ParameterInterpreter {
    * @return the string value of the configuration file.
    */
   boolean hasConfigFile() {
-    if (m_parameters.hasOption(CONFIG)) {
-      File f_config = new File(m_parameters.getOptionValue(CONFIG));
+    if (mParameters.hasOption(CONFIG)) {
+      File f_config = new File(mParameters.getOptionValue(CONFIG));
       return f_config.exists() && f_config.canRead();
     }
     return false;
@@ -145,7 +145,7 @@ class ParameterInterpreter {
    */
   String getConfigFile() {
     if (hasConfigFile()) {
-      return m_parameters.getOptionValue(CONFIG);
+      return mParameters.getOptionValue(CONFIG);
     }
     return null;
   }
@@ -156,27 +156,27 @@ class ParameterInterpreter {
    * @return true if -h was passed as a command line argument.
    */
   boolean requestsHelp() {
-    return m_parameters.hasOption(HELP);
+    return mParameters.hasOption(HELP);
   }
 
   boolean requestsDebug() {
-    return m_parameters.hasOption(DEBUG);
+    return mParameters.hasOption(DEBUG);
   }
 
   public boolean requestsBuilder() {
-    return m_parameters.hasOption(BUILDER);
+    return mParameters.hasOption(BUILDER);
   }
 
   public String getRequestedBuilder() {
-    return m_parameters.getOptionValue(BUILDER);
+    return mParameters.getOptionValue(BUILDER);
   }
 
   boolean specifiesLogFile() {
-    return m_parameters.hasOption(LOG);
+    return mParameters.hasOption(LOG);
   }
 
   String getSpecifiedLogFile() {
-    return m_parameters.getOptionValue(LOG);
+    return mParameters.getOptionValue(LOG);
   }
 
   /**
@@ -187,7 +187,7 @@ class ParameterInterpreter {
     final PrintWriter writer = new PrintWriter(System.out);
     final HelpFormatter helpFormatter = new HelpFormatter();
     helpFormatter.printHelp(writer, ROW_WIDTH, cmlSyntax, "",
-        m_options, SPACES_AFTER_OPTION,
+        mOptions, SPACES_AFTER_OPTION,
         SPACES_BEFORE_OPTION, "");
     writer.flush();
   }
